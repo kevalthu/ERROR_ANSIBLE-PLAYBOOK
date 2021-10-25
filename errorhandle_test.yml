@@ -1,0 +1,36 @@
+---
+- name: test play for error handle 
+  hosts: localhost
+  tasks:
+
+    - block:
+
+        - name: install httpd 
+          yum: 
+            name: httpd 
+            state: latest
+
+        - name: copy index.html in /var/www/html 
+          copy: 
+            src: index.html
+            dest: /var/www/html/
+
+        - name: start service
+          service:
+            name: httpd
+            state: started 
+            enabled: true 
+            
+
+      rescue:  
+
+         - name: start rollback 
+           yum:
+             name:  httpd 
+             state: absent 
+
+      always:
+
+         - name: msg print 
+           debug: 
+             msg: " Please for confirmation check server " 
